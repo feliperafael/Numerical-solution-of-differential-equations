@@ -2,38 +2,47 @@ import math
 alpha = 0.0
 beta  = 0.1
 
-inicio_dominio = 0
-final_dominio  = 2*math.pi
-delta_t = 4
-passo = (final_dominio - inicio_dominio)/delta_t
+def function(t):
+	return alpha*math.cos(t) + beta*math.sin(t)
+
+inicio_dominio = 0.0
+final_dominio  = 2.0*math.pi
+delta_t =8
+passo = (final_dominio - inicio_dominio)/float(delta_t)
 
 u_0 = alpha
 u_1 = beta
 u_2 = beta*delta_t + alpha
 
-u_n_menos_1 = u_0
-u_n = u_1
-u_n_mais_1 = u_2
-
 n = []
 malha = []
+x = []
+
+malha.append(beta)
+
 aux = inicio_dominio
 for i in range(delta_t):
-	n.append(aux)
+	n.append(function(aux))
+	x.append(aux)
 	aux += passo
-print n
 
-def calcula_u_n_mais_1(u_n_menos_1,u_n):
-	u_n_mais_1 = u_n_menos_1*delta_t + u_n
-	return u_n_mais_1 
-def derivada_segunda(u_n_menos_1,u_n,u_n_mais_1):
-	derivada_segunda = (u_n_mais_1 -2*u_n + u_n_menos_1)/(delta_t**2)
+def calcula_fx1(fx0,f_linha_x0):
+	fx1 = fx0 + passo*(f_linha_x0)
+	return float(fx1)
+
+def derivada_segunda(u_0,u_1,u_2):
+	derivada_segunda = (u_2 -2*u_1 + u_0)/(delta_t)
 	return derivada_segunda
  
-for i in range(delta_t):
-	print("numerica : "+str(derivada_segunda(u_n_menos_1,u_n,u_n_mais_1)))
+for i in range(delta_t-2):
+	#print i
+	aux = derivada_segunda(u_0,u_1,u_2)
+	print("numerica : "+str(aux))
 	print("exata    : "+str(-1*math.sin(i)))
-	u_n_menos_1 = u_n
-	u_n = u_n_mais_1
-	u_n_mais_1 = calcula_u_n_mais_1(u_n_menos_1,u_n)
+	print "" 	
+	
+	u_0 = u_1
+	u_1 = u_2
+	u_2 = u_2 + aux*passo + malha[i]*passo + x[i]
+	malha.append(aux)
 	
